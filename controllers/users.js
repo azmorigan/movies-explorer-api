@@ -61,4 +61,38 @@ const getUserInfo = (req, res, next) => {
     .catch(next);
 };
 
-module.exports = { createUser, login, getUserInfo };
+// Редактировать name и email
+const editUser = (req, res, next) => {
+  const { name, email } = req.body;
+  if (!name || !email) {
+    throw new BadRequestError('Переданы некорректные данные при обновлении профиля.');
+  }
+  User.findByIdAndUpdate(req.user._id, { name, email },
+    {
+      new: true,
+      runValidators: true,
+      upsert: false,
+    })
+    .then((user) => {
+      res.status(200).send({
+        name: user.name,
+        email: user.email,
+      });
+    })
+    .catch((err) => {
+      if (err.errors.email) {
+        throw new BadRequestError(err.errors.email.message);
+      }
+      if (err.errors.name) {
+        throw new BadRequestError(err.errors.name.message);
+      }
+    })
+    .catch(next);
+};
+
+module.exports = {
+  createUser,
+  login,
+  getUserInfo,
+  editUser,
+};

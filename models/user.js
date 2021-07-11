@@ -8,8 +8,8 @@ const userSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
-    minLength: 2,
-    maxLength: 30,
+    minLength: [2, 'Минимальная длина - 2'],
+    maxLength: [30, 'Максимальная длина - 30'],
   },
   email: {
     type: String,
