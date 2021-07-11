@@ -14,14 +14,12 @@
     "url": "git+https://github.com/azmorigan/movies-explorer-api.git"
   },
   "keywords": [],
-  "author": "",
+  "author": "azmorigan",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/azmorigan/movies-explorer-api/issues"
-  },
-  "homepage": "https://github.com/azmorigan/movies-explorer-api#readme",
   "dependencies": {
+    "bcrypt": "^5.0.1",
     "express": "^4.17.1",
+    "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.13.2",
     "validator": "^13.6.0"
   },

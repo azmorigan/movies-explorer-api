@@ -1,10 +1,10 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const routes = require('./routes');
+const errorHandler = require('./middlewares/error-handler');
 
 const { PORT = 3000 } = process.env;
 const app = express();
-
-app.use(express.json());
 
 mongoose.connect('mongodb://localhost:27017/bitfilmsdb', {
   useNewUrlParser: true,
@@ -13,7 +13,10 @@ mongoose.connect('mongodb://localhost:27017/bitfilmsdb', {
   useUnifiedTopology: true,
 });
 
+app.use(express.json());
+app.use(routes);
+app.use(errorHandler);
+
 app.listen(PORT, () => {
-  // eslint-disable-next-line no-console
   console.log(`server working on port ${PORT}`);
 });
