@@ -3,11 +3,11 @@ const moviesRouter = require('express').Router();
 const {
   getMovies,
   createMovie,
-  // deleteMovie,
+  deleteMovie,
 } = require('../controllers/movies');
 
 moviesRouter.get('/', getMovies);
 moviesRouter.post('/', createMovie);
-// moviesRouter.delete('/:movieId', deleteMovie);
+moviesRouter.delete('/:movieId', deleteMovie);
 
 module.exports = moviesRouter;
