@@ -1,5 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const { errors } = require('celebrate');
 const routes = require('./routes');
 const errorHandler = require('./middlewares/error-handler');
 
@@ -15,6 +16,7 @@ mongoose.connect('mongodb://localhost:27017/bitfilmsdb', {
 
 app.use(express.json());
 app.use(routes);
+app.use(errors());
 app.use(errorHandler);
 
 app.listen(PORT, () => {
