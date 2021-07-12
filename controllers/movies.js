@@ -47,13 +47,13 @@ const getMovies = (req, res, next) => {
 
 // Удалить фильм по _id
 const deleteMovie = (req, res, next) => {
-  const { movieId } = req.params;
-  Movie.findById(movieId)
+  const { _id } = req.params;
+  Movie.findById(_id)
     .then((movie) => {
       if (movie.owner.toString() !== req.user._id) {
         throw new ForbiddenError('Нельзя удалить чужой фильм.');
       }
-      Movie.findByIdAndRemove(movieId)
+      Movie.findByIdAndRemove(_id)
         .then((deletingMovie) => res.status(200).send(deletingMovie));
     })
     .catch((err) => {

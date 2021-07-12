@@ -1,5 +1,6 @@
 const moviesRouter = require('express').Router();
 
+const { createMovieValidation, deleteMovieValidation } = require('../middlewares/pre-validation');
 const {
   getMovies,
   createMovie,
@@ -7,7 +8,7 @@ const {
 } = require('../controllers/movies');
 
 moviesRouter.get('/', getMovies);
-moviesRouter.post('/', createMovie);
-moviesRouter.delete('/:_id', deleteMovie);
+moviesRouter.post('/', createMovieValidation, createMovie);
+moviesRouter.delete('/:_id', deleteMovieValidation, deleteMovie);
 
 module.exports = moviesRouter;
