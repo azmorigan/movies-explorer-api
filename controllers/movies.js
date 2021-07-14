@@ -41,20 +41,23 @@ const createMovie = (req, res, next) => {
 // Получить все фильмы
 const getMovies = (req, res, next) => {
   Movie.find({})
+    .populate('owner')
     .then((movies) => res.status(200).send(movies))
     .catch(next);
 };
 
 // Удалить фильм по _id
 const deleteMovie = (req, res, next) => {
-  const { _id } = req.params;
-  Movie.findById(_id)
+  const { id } = req.params;
+  Movie.findById(id)
     .then((movie) => {
-      if (movie.owner.toString() !== req.user._id) {
+      if (movie.owner._id.toString() !== req.user._id) {
         throw new ForbiddenError('Нельзя удалить чужой фильм.');
       }
-      Movie.findByIdAndRemove(_id)
-        .then((deletingMovie) => res.status(200).send(deletingMovie));
+      Movie.findByIdAndRemove(id)
+        .then((deletingMovie) => {
+          res.status(200).send(deletingMovie);
+        });
     })
     .catch((err) => {
       if (err.name === 'TypeError') {
@@ -63,6 +66,7 @@ const deleteMovie = (req, res, next) => {
       if (err.name === 'CastError') {
         throw new BadRequestError('Переданы некорректные данные.');
       }
+      next(err);
     })
     .catch(next);
 };

@@ -4,7 +4,8 @@ const User = require('../models/user');
 const ConflictError = require('../errors/conflict-error');
 const BadRequestError = require('../errors/bad-request-error');
 
-const JWT_KEY = 'dev-stage';
+const JWT_KEY = require('../config');
+
 const SALT_ROUNDS = 10;
 
 // Регистрация пользователя
