@@ -51,12 +51,10 @@ const deleteMovie = (req, res, next) => {
   Movie.findById(id)
     .then((movie) => {
       if (movie.owner.toString() !== req.user._id) {
-        throw new ForbiddenError('Нельзя удалить чужой фильм.');
+        throw new ForbiddenError('Нельзя удалять чужой фильм.');
       }
-      Movie.findByIdAndRemove(id)
-        .then((deletingMovie) => {
-          res.send(deletingMovie);
-        });
+      return movie.remove()
+        .then((deletingMovie) => res.send(deletingMovie));
     })
     .catch((err) => {
       if (err.name === 'TypeError') {

@@ -4,7 +4,7 @@ const User = require('../models/user');
 const ConflictError = require('../errors/conflict-error');
 const BadRequestError = require('../errors/bad-request-error');
 
-const JWT_KEY = require('../config');
+const { JWT_KEY } = require('../config');
 
 const SALT_ROUNDS = 10;
 
@@ -69,26 +69,32 @@ const editUser = (req, res, next) => {
   if (!name || !email) {
     throw new BadRequestError('Переданы некорректные данные при обновлении профиля.');
   }
-  User.findByIdAndUpdate(req.user._id, { name, email },
-    {
-      new: true,
-      runValidators: true,
-      upsert: false,
-    })
+  User.find({ email })
     .then((user) => {
-      res.send({
-        name: user.name,
-        email: user.email,
-      });
-    })
-    .catch((err) => {
-      if (err.errors.email) {
-        throw new BadRequestError(err.errors.email.message);
+      if (user.length === 0) {
+        User.findByIdAndUpdate(req.user._id, { name, email },
+          {
+            new: true,
+            runValidators: true,
+            upsert: false,
+          })
+          .then((updatedUser) => {
+            res.send({
+              name: updatedUser.name,
+              email: updatedUser.email,
+            });
+          })
+          .catch((err) => {
+            if (err.errors.email) {
+              throw new BadRequestError(err.errors.email.message);
+            }
+            if (err.errors.name) {
+              throw new BadRequestError(err.errors.name.message);
+            }
+            throw err;
+          });
       }
-      if (err.errors.name) {
-        throw new BadRequestError(err.errors.name.message);
-      }
-      throw err;
+      next(new ConflictError('Пользователь с таким email уже существует.'));
     })
     .catch(next);
 };

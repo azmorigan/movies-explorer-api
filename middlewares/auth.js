@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 const UnauthorizedError = require('../errors/unauthorized-error');
-const JWT_KEY = require('../config');
+const { JWT_KEY } = require('../config');
 
 // Проверяет наличие токена в headers: authorization,
 // сравнивает с базой данных и пропускает при совпадении.

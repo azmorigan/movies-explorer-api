@@ -8,11 +8,11 @@ const routes = require('./routes');
 const errorHandler = require('./middlewares/error-handler');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 const cors = require('./middlewares/cors');
+const { PORT, MONGO_WAY } = require('./config');
 
-const { PORT = 3000 } = process.env;
 const app = express();
 
-mongoose.connect('mongodb://localhost:27017/bitfilmsdb', {
+mongoose.connect(MONGO_WAY, {
   useNewUrlParser: true,
   useCreateIndex: true,
   useFindAndModify: false,
