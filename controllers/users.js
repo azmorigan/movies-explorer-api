@@ -18,7 +18,7 @@ const createUser = (req, res, next) => {
       password: hash,
     }))
     .then((user) => {
-      res.status(200).send({
+      res.send({
         name: user.name,
         email: user.email,
       });
@@ -33,6 +33,7 @@ const createUser = (req, res, next) => {
       if (err.name === 'ValidationError' || err.message === 'data and salt arguments required') {
         throw new BadRequestError('Переданы некорректные данные при создании пользователя.');
       }
+      throw err;
     })
     .catch(next);
 };
@@ -75,7 +76,7 @@ const editUser = (req, res, next) => {
       upsert: false,
     })
     .then((user) => {
-      res.status(200).send({
+      res.send({
         name: user.name,
         email: user.email,
       });
@@ -87,6 +88,7 @@ const editUser = (req, res, next) => {
       if (err.errors.name) {
         throw new BadRequestError(err.errors.name.message);
       }
+      throw err;
     })
     .catch(next);
 };

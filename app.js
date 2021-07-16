@@ -20,8 +20,8 @@ mongoose.connect('mongodb://localhost:27017/bitfilmsdb', {
 });
 
 app.use(cors);
-app.use(limiter);
 app.use(requestLogger);
+app.use(limiter);
 app.use(helmet());
 app.use(express.json());
 app.use(routes);

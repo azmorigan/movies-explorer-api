@@ -15,8 +15,8 @@ const createMovie = (req, res, next) => {
     trailer,
     thumbnail,
     movieId,
-    nameRu,
-    nameEn,
+    nameRU,
+    nameEN,
   } = req.body;
   Movie.create({
     country,
@@ -29,20 +29,19 @@ const createMovie = (req, res, next) => {
     thumbnail,
     owner: req.user._id,
     movieId,
-    nameRu,
-    nameEn,
+    nameRU,
+    nameEN,
   })
     .then((card) => {
-      res.status(200).send(card);
+      res.send(card);
     })
     .catch(next);
 };
 
 // Получить все фильмы
 const getMovies = (req, res, next) => {
-  Movie.find({})
-    .populate('owner')
-    .then((movies) => res.status(200).send(movies))
+  Movie.find({ owner: req.user._id })
+    .then((movies) => res.send(movies))
     .catch(next);
 };
 
@@ -51,12 +50,12 @@ const deleteMovie = (req, res, next) => {
   const { id } = req.params;
   Movie.findById(id)
     .then((movie) => {
-      if (movie.owner._id.toString() !== req.user._id) {
+      if (movie.owner.toString() !== req.user._id) {
         throw new ForbiddenError('Нельзя удалить чужой фильм.');
       }
       Movie.findByIdAndRemove(id)
         .then((deletingMovie) => {
-          res.status(200).send(deletingMovie);
+          res.send(deletingMovie);
         });
     })
     .catch((err) => {
@@ -66,7 +65,7 @@ const deleteMovie = (req, res, next) => {
       if (err.name === 'CastError') {
         throw new BadRequestError('Переданы некорректные данные.');
       }
-      next(err);
+      throw err;
     })
     .catch(next);
 };
