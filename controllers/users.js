@@ -93,8 +93,9 @@ const editUser = (req, res, next) => {
             }
             throw err;
           });
+      } else {
+        next(new ConflictError('Пользователь с таким email уже существует.'));
       }
-      next(new ConflictError('Пользователь с таким email уже существует.'));
     })
     .catch(next);
 };
