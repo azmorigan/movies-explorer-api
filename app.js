@@ -2,12 +2,11 @@ const express = require('express');
 const mongoose = require('mongoose');
 const { errors } = require('celebrate');
 const helmet = require('helmet');
-
+const cors = require('cors');
 const limiter = require('./middlewares/limiter');
 const routes = require('./routes');
 const errorHandler = require('./middlewares/error-handler');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
-const cors = require('./middlewares/cors');
 const { PORT, MONGO_WAY } = require('./config');
 
 const app = express();
@@ -19,7 +18,7 @@ mongoose.connect(MONGO_WAY, {
   useUnifiedTopology: true,
 });
 
-app.use(cors);
+app.use(cors());
 app.use(requestLogger);
 app.use(limiter);
 app.use(helmet());
