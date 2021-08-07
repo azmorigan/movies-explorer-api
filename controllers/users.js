@@ -71,6 +71,10 @@ const editUser = (req, res, next) => {
   }
   User.findById(req.user._id)
     .then((user) => {
+      if (user.name === name && user.email === email) {
+        throw new BadRequestError('Необходимо изменить данные профиля.');
+      }
+
       if (user.name !== name && user.email === email) {
         User.findOneAndUpdate({ name })
           .then((updatedNameUser) => {
