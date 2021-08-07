@@ -69,32 +69,40 @@ const editUser = (req, res, next) => {
   if (!name || !email) {
     throw new BadRequestError('Переданы некорректные данные при обновлении профиля.');
   }
-  User.find({ email })
+  User.findById(req.user._id)
     .then((user) => {
-      if (user.length === 0) {
-        User.findByIdAndUpdate(req.user._id, { name, email },
-          {
-            new: true,
-            runValidators: true,
-            upsert: false,
-          })
-          .then((updatedUser) => {
+      if (user.name !== name && user.email === email) {
+        User.findOneAndUpdate({ name })
+          .then((updatedNameUser) => {
             res.send({
-              name: updatedUser.name,
-              email: updatedUser.email,
+              name,
+              email: updatedNameUser.email,
             });
           })
-          .catch((err) => {
-            if (err.errors.email) {
-              throw new BadRequestError(err.errors.email.message);
+          .catch(next);
+      }
+
+      if (email !== user.email) {
+        User.find({ email })
+          .then((result) => {
+            if (result.length > 0) {
+              throw new ConflictError('Пользователь с таким email уже существует.');
             }
-            if (err.errors.name) {
-              throw new BadRequestError(err.errors.name.message);
-            }
-            throw err;
-          });
-      } else {
-        next(new ConflictError('Пользователь с таким email уже существует.'));
+            User.findByIdAndUpdate(req.user._id, { name, email })
+              .then((updatedUser) => {
+                res.send({ name, email });
+              })
+              .catch((err) => {
+                if (err.errors.email) {
+                  throw new BadRequestError(err.errors.email.message);
+                }
+                if (err.errors.name) {
+                  throw new BadRequestError(err.errors.name.message);
+                }
+                throw err;
+              });
+          })
+          .catch(next);
       }
     })
     .catch(next);
